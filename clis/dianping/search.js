@@ -62,6 +62,10 @@ cli({
                 }
                 const rows = [];
                 items.forEach((el, i) => {
+                    const resultShape = el.querySelector('.tit h4, .review-num, .mean-price, .tag-addr')
+                        || el.querySelector('.tit a, a[data-shopid], a[href*="/shop/"]');
+                    if (!resultShape) return;
+
                     const link = el.querySelector('.tit a[href*="/shop/"]')
                         || el.querySelector('a[data-shopid]')
                         || el.querySelector('a[href*="/shop/"]');
@@ -110,11 +114,12 @@ cli({
             );
         }
 
-        const rows = (result.rows || [])
-            .filter((row) => row?.shop_id)
-            .slice(0, limit);
+        const rows = (result.rows || []).slice(0, limit);
         if (rows.length === 0) {
-            throw new CommandExecutionError('dianping search parser found result cards but no shop_id values');
+            throw new CommandExecutionError('dianping search parser found no result-shaped shop cards');
+        }
+        if (rows.some((row) => !row?.shop_id)) {
+            throw new CommandExecutionError('dianping search parser found result cards without shop_id values');
         }
         return rows.map((r) => ({
             rank: r.rank,

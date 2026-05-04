@@ -172,6 +172,14 @@ describe('dianping adapter — search runtime', () => {
             ok: true,
             rows: [{ rank: 1, shop_id: '', name: '火锅店' }],
         }), { keyword: '火锅', city: 2 })).rejects.toThrow(CommandExecutionError);
+
+        await expect(command.func(createPageMock({
+            ok: true,
+            rows: [
+                { rank: 1, shop_id: 'GxJZ4urc9TnKE3kY', name: '火锅店' },
+                { rank: 2, shop_id: '', name: '缺 id 火锅店' },
+            ],
+        }), { keyword: '火锅', city: 2, limit: 2 })).rejects.toThrow(CommandExecutionError);
     });
 
     it('wraps browser navigation and evaluate failures as CommandExecutionError', async () => {
