@@ -1,6 +1,6 @@
 // coingecko top — top coins by market cap.
 import { cli, Strategy } from '@jackwener/opencli/registry';
-import { CliError } from '@jackwener/opencli/errors';
+import { ArgumentError, CliError } from '@jackwener/opencli/errors';
 
 cli({
   site: 'coingecko',
@@ -12,12 +12,18 @@ cli({
   browser: false,
   args: [
     { name: 'currency', type: 'string', default: 'usd', help: '计价币种 (usd / cny / eur / jpy ...)' },
-    { name: 'limit',    type: 'int',    default: 10,    help: '返回数量 (max 250)' },
+    { name: 'limit',    type: 'int',    default: 10,    help: '返回数量（默认 10，最多 250）' },
   ],
   columns: ['rank', 'symbol', 'name', 'price', 'change24hPct', 'marketCap', 'volume24h', 'high24h', 'low24h'],
   func: async (args) => {
     const currency = String(args.currency ?? 'usd').toLowerCase();
-    const limit = Math.max(1, Math.min(Number(args.limit) || 10, 250));
+    const limit = Number(args.limit ?? 10);
+    if (!Number.isInteger(limit) || limit <= 0) {
+      throw new ArgumentError('limit must be a positive integer');
+    }
+    if (limit > 250) {
+      throw new ArgumentError('limit must be <= 250 (CoinGecko per_page upper bound)');
+    }
 
     const url = new URL('https://api.coingecko.com/api/v3/coins/markets');
     url.searchParams.set('vs_currency', currency);

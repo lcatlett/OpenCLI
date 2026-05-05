@@ -73,3 +73,4 @@ Use `opencli 1point3acres forums` to see the full list.
 - The site serves GBK-encoded HTML; the adapter decodes to UTF-8 internally
 - `tid` (thread id) is the canonical handle that pipes a listing row into `thread` for the full content
 - Public endpoints serve rendered HTML, so heavy bot traffic may hit Discuz challenge / login gates — fall back to a logged-in session if `hot` / `latest` start returning empty rows
+- `--limit` is validated upfront and rejected with `ArgumentError` if non-positive or above 50 (the page yields ~50 rows max) — no silent clamp

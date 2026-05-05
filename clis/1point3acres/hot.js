@@ -2,7 +2,7 @@
  * 一亩三分地 热门帖子 — Discuz guide=hot view.
  */
 import { cli, Strategy } from '@jackwener/opencli/registry';
-import { fetchHtml, parseThreadList, BASE } from './utils.js';
+import { fetchHtml, parseThreadList, normalizeLimit, BASE } from './utils.js';
 
 cli({
     site: '1point3acres',
@@ -13,14 +13,14 @@ cli({
     strategy: Strategy.PUBLIC,
     browser: false,
     args: [
-        { name: 'limit', type: 'int', default: 20, help: '返回条数（默认 20，最多 ~50）' },
+        { name: 'limit', type: 'int', default: 20, help: '返回条数（默认 20，最多 50）' },
     ],
     columns: ['rank', 'tid', 'title', 'forum', 'author', 'replies', 'views', 'lastReplyTime', 'url'],
     func: async (args) => {
+        const limit = normalizeLimit(args.limit, 20, 50);
         const html = await fetchHtml(`${BASE}/forum.php?mod=guide&view=hot`);
         const items = parseThreadList(html);
-        const n = Math.max(1, Math.min(Number(args.limit) || 20, items.length));
-        return items.slice(0, n).map((t, i) => ({
+        return items.slice(0, limit).map((t, i) => ({
             rank: i + 1,
             tid: t.tid,
             title: t.title,

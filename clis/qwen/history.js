@@ -1,4 +1,5 @@
 import { cli, Strategy } from '@jackwener/opencli/registry';
+import { ArgumentError } from '@jackwener/opencli/errors';
 import {
     QIANWEN_DOMAIN,
     authRequired,
@@ -25,11 +26,17 @@ cli({
     browser: true,
     navigateBefore: false,
     args: [
-        { name: 'limit', type: 'int', default: 20, help: 'Max conversations to show' },
+        { name: 'limit', type: 'int', default: 20, help: 'Max conversations to show (default 20, max 100)' },
     ],
     columns: ['Index', 'Title', 'Updated', 'Url'],
     func: async (page, kwargs) => {
-        const limit = Math.max(1, Math.min(parseInt(kwargs.limit, 10) || 20, 100));
+        const limit = Number(kwargs.limit ?? 20);
+        if (!Number.isInteger(limit) || limit <= 0) {
+            throw new ArgumentError('limit must be a positive integer');
+        }
+        if (limit > 100) {
+            throw new ArgumentError('limit must be <= 100');
+        }
         await ensureOnQianwen(page);
         await dismissLoginModal(page);
         await page.wait(1);

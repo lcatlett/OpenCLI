@@ -176,7 +176,7 @@
         "type": "int",
         "default": 20,
         "required": false,
-        "help": "返回条数（默认 20）"
+        "help": "返回条数（默认 20，最多 50）"
       }
     ],
     "columns": [
@@ -222,7 +222,7 @@
         "type": "int",
         "default": 20,
         "required": false,
-        "help": "返回条数（默认 20）"
+        "help": "返回条数（默认 20，最多 50）"
       }
     ],
     "columns": [
@@ -280,7 +280,7 @@
         "type": "int",
         "default": 20,
         "required": false,
-        "help": "返回条数（默认 20，最多 ~50）"
+        "help": "返回条数（默认 20，最多 50）"
       }
     ],
     "columns": [
@@ -312,7 +312,7 @@
         "type": "int",
         "default": 20,
         "required": false,
-        "help": "返回条数（默认 20，最多 ~50）"
+        "help": "返回条数（默认 20，最多 50）"
       }
     ],
     "columns": [
@@ -387,7 +387,7 @@
         "type": "int",
         "default": 20,
         "required": false,
-        "help": "返回条数（默认 20）"
+        "help": "返回条数（默认 20，最多 50）"
       },
       {
         "name": "fid",
@@ -4789,7 +4789,7 @@
         "type": "int",
         "default": 10,
         "required": false,
-        "help": "返回数量 (max 250)"
+        "help": "返回数量（默认 10，最多 250）"
       }
     ],
     "columns": [
@@ -15387,7 +15387,7 @@
         "type": "int",
         "default": 20,
         "required": false,
-        "help": "Max conversations to show"
+        "help": "Max conversations to show (default 20, max 100)"
       }
     ],
     "columns": [

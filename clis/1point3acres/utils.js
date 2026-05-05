@@ -8,9 +8,25 @@
  * - User profile:     /bbs/space-uid-<uid>.html  or  /bbs/space-username-<name>.html
  * - Search:           /bbs/search.php?mod=forum  (COOKIE — guests get an alert page)
  */
-import { CliError, AuthRequiredError } from '@jackwener/opencli/errors';
+import { CliError, AuthRequiredError, ArgumentError } from '@jackwener/opencli/errors';
 
 export const BASE = 'https://www.1point3acres.com/bbs';
+
+/**
+ * Validate `limit` per typed-fail-fast convention (no silent clamp).
+ * Throws ArgumentError on non-positive / non-integer / out-of-range input.
+ */
+export function normalizeLimit(value, defaultValue, maxValue, label = 'limit') {
+    const raw = value ?? defaultValue;
+    const limit = Number(raw);
+    if (!Number.isInteger(limit) || limit <= 0) {
+        throw new ArgumentError(`${label} must be a positive integer`);
+    }
+    if (limit > maxValue) {
+        throw new ArgumentError(`${label} must be <= ${maxValue}`);
+    }
+    return limit;
+}
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0 Safari/537.36';
 

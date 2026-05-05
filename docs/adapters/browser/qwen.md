@@ -109,4 +109,6 @@ opencli qwen image "a tiny robot" --sd true
 - `ask` waits for the streaming reply to finish; `send` returns immediately after submission
 - DeepThink (`--think`) and DeepResearch (`--research`) toggle the corresponding composer chips before submitting
 - Generated image files are timestamped to avoid overwriting prior runs
+- `status` returns `Model` / `SessionId` as `null` when they cannot be detected (e.g. guest mode, page still loading) rather than a string sentinel — branch on `null` in agent code
 - DOM or product changes on Qwen can break composer detection — `opencli qwen status` is the quickest sanity check
+- `limit` is validated and rejected with `ArgumentError` if non-positive or above the documented max (e.g. `history` max 100); no silent clamp

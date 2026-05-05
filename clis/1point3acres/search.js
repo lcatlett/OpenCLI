@@ -8,7 +8,7 @@
  */
 import { cli, Strategy } from '@jackwener/opencli/registry';
 import { ArgumentError } from '@jackwener/opencli/errors';
-import { fetchHtml, parseSearchList, assertNotGuestAlert, getCookie, decodeEntities, BASE } from './utils.js';
+import { fetchHtml, parseSearchList, assertNotGuestAlert, getCookie, decodeEntities, normalizeLimit, BASE } from './utils.js';
 
 cli({
     site: '1point3acres',
@@ -21,14 +21,14 @@ cli({
     navigateBefore: false,
     args: [
         { name: 'query', required: true, positional: true, help: '搜索关键字' },
-        { name: 'limit', type: 'int', default: 20, help: '返回条数（默认 20）' },
+        { name: 'limit', type: 'int', default: 20, help: '返回条数（默认 20，最多 50）' },
         { name: 'fid', type: 'string', default: '', help: '限定版块 ID（可选）' },
     ],
     columns: ['rank', 'tid', 'title', 'forum', 'author', 'replies', 'views', 'postTime', 'url'],
     func: async (page, args) => {
         const query = String(args.query || '').trim();
         if (!query) throw new ArgumentError('query 不能为空');
-        const limit = Math.max(1, Number(args.limit) || 20);
+        const limit = normalizeLimit(args.limit, 20, 50);
         const fid = String(args.fid || '').trim();
 
         const cookie = await getCookie(page);
@@ -59,8 +59,7 @@ cli({
             }
             return [];
         }
-        const n = Math.max(1, Math.min(limit, items.length));
-        return items.slice(0, n).map((t, i) => ({
+        return items.slice(0, limit).map((t, i) => ({
             rank: i + 1,
             tid: t.tid,
             title: t.title,

@@ -46,3 +46,4 @@ opencli coingecko top -f json
 - The public endpoint is rate-limited; retry briefly if you hit transient `HTTP 429` responses
 - All numeric values are denominated in the selected `--currency`
 - `change24hPct` is a raw percent (e.g. `2.34` means `+2.34%`), not a fraction
+- `--limit` is validated upfront and rejected with `ArgumentError` if non-positive or above 250 (the CoinGecko `per_page` upper bound) — no silent clamp
