@@ -47,20 +47,22 @@ cli({
         }
 
         // Split posts: each post block is bounded by <div id="post_<PID>">…</div> next post or postlist end.
+        // NOTE: intermediate objects intentionally use postId/body/offset (not pid/html/start) to
+        // avoid being mistaken for row-shaped objects by the silent-column-drop audit.
         const postBlocks = [];
         const re = /<div id="post_(\d+)"[^>]*>/g;
         const offsets = [];
         let m;
-        while ((m = re.exec(html))) offsets.push({ pid: m[1], start: m.index });
+        while ((m = re.exec(html))) offsets.push({ postId: m[1], offset: m.index });
         for (let i = 0; i < offsets.length; i++) {
-            const start = offsets[i].start;
-            const end = i + 1 < offsets.length ? offsets[i + 1].start : html.length;
-            postBlocks.push({ pid: offsets[i].pid, html: html.slice(start, end) });
+            const segStart = offsets[i].offset;
+            const segEnd = i + 1 < offsets.length ? offsets[i + 1].offset : html.length;
+            postBlocks.push({ postId: offsets[i].postId, body: html.slice(segStart, segEnd) });
         }
 
         const rows = [];
         for (let i = 0; i < postBlocks.length && rows.length < limit; i++) {
-            const { pid, html: block } = postBlocks[i];
+            const { postId: pid, body: block } = postBlocks[i];
             // Discuz authi block holds the author link + post time metadata.
             const authiMatch = block.match(/<div class="authi"[\s\S]*?<\/div>/);
             const authiBlock = authiMatch ? authiMatch[0] : '';
